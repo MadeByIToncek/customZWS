@@ -60,8 +60,6 @@ function makeid(length) {
     return result;
 }
 
-app.set("view engine", "ejs");
-
 app.get('/:id', (req, res) => {
     var id = req.params.id
     id = id.replace('​', 'a')
@@ -71,13 +69,13 @@ app.get('/:id', (req, res) => {
         if (Array.from(result).length == 0) {
             res.send("We were unable to locate this link...are you sure it's correct?");
         } else {
-            res.render('link', { url: result[0].targetUrl })
+            res.redirect(308, result[0].targetUrl)
         }
     })
 })
 
 app.get('/', (req, res) => {
-    res.render('index')
+    res.send("There's nothing to be seen here :)")
 })
 
 app.get('/generate/:name', (req, res) => {
