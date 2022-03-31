@@ -41,7 +41,7 @@ app.get('/:id', (req, res) => {
     id = id.replace('﻿', 'b')
     id = id.replace('᠎', 'c')
     Model.find({ _id: id }, function(err, result) {
-        if (err || result[0].targetUrl == undefined) {
+        if (Array.from(result).length == 0) {
             res.send("We were unable to locate this link...are you sure it's correct?");
         } else {
             res.render('link', { url: result[0].targetUrl })
