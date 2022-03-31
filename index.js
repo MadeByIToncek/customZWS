@@ -53,6 +53,11 @@ app.get('/', (req, res) => {
     res.render('index')
 })
 
+app.get('/generate/:name', (req, res) => {
+    res.set({ "Content-Disposition": "attachment; filename=\"zws.sxcu\"" })
+    res.send('{ "Version": "13.7.0", "Name": "ajtonckovo ZWS", "DestinationType": "URLShortener", "RequestMethod": "PUT", "RequestURL": "https://l.itoncek.cf/add", "Body": "JSON", "Data": "{\"input\":\"$input$\",\"user\":\"' + req.params.name + '\"}", "URL": "$json:url$\"\}')
+})
+
 app.put('/add', express.json(), (req, res) => {
     const url = makeid(12);
     var id = url
