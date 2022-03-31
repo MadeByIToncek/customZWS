@@ -1,30 +1,33 @@
 const express = require('express')
 const app = express()
+require('dotenv').config()
 const port = 3333
-    /*const whitespaces = [
-        "​",
-        "﻿",
-        "᠎"
-    ]*/
-const whitespaces = [
+const w = [
+    "​",
+    "﻿",
+    "᠎"
+]
+const wa = [
     "a",
     "b",
     "c"
 ]
 
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/test');
+mongoose.connect(process.env.MONGO_URL);
 
-const Cat = mongoose.model('Cat', { name: String });
-
-const kitty = new Cat({ name: 'Zildjian' });
-kitty.save().then(() => console.log('meow'));
+const Model = mongoose.model('Link', {
+    _id: String,
+    id: String,
+    targetUrl: String,
+    user: String
+});
 
 function makeid(length) {
     var result = '';
-    var charactersLength = whitespaces.length;
+    var charactersLength = w.length;
     for (var i = 0; i < length; i++) {
-        result += whitespaces[(Math.floor(Math.random() *
+        result += w[(Math.floor(Math.random() *
             charactersLength))];
     }
     return result;
@@ -33,23 +36,37 @@ function makeid(length) {
 app.set("view engine", "ejs");
 
 app.get('/:id', (req, res) => {
-    console.log(id)
-    res.render('index')
+    var id = req.params.id
+    id = id.replace('​', 'a')
+    id = id.replace('﻿', 'b')
+    id = id.replace('᠎', 'c')
+    Model.find({ _id: id }, function(err, result) {
+        if (err || result[0].targetUrl == undefined) {
+            res.send("We were unable to locate this link...are you sure it's correct?");
+        } else {
+            res.render('link', { url: result[0].targetUrl })
+        }
+    })
 })
 
-app.get('/:id', (req, res) => {
+app.get('/', (req, res) => {
     res.render('index')
 })
 
 app.put('/add', express.json(), (req, res) => {
     const url = makeid(12);
-    console.log(req.body)
-    res.json({ url: "http://localhost:3333/" + url, delurl: "http://localhost:3333/delete" + url })
-})
-
-app.delete('/delete', express.json(), (req, res) => {
-    console.log(req.body)
-    res.json()
+    var id = url
+    id = id.replace('​', 'a')
+    id = id.replace('﻿', 'b')
+    id = id.replace('᠎', 'c')
+    const database = new Model({
+        _id: id,
+        id: url,
+        targetUrl: req.body.input,
+        user: req.body.user
+    });
+    database.save();
+    res.json({ url: "http://localhost:3333/" + url })
 })
 
 app.listen(port, () => {

@@ -1,0 +1,8 @@
+<button onclick="redirect()" id="link" name="<%=url%>">Redirect</button>
+<script>
+    window.location.href = document.getElementById("link").name;
+
+    function redirect() {
+        window.location.href = document.getElementById("link").name
+    }
+</script>
