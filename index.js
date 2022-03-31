@@ -66,7 +66,7 @@ app.put('/add', express.json(), (req, res) => {
         user: req.body.user
     });
     database.save();
-    res.json({ url: "http://localhost:3333/" + url })
+    res.json({ url: "https://l.itoncek.cf/" + url })
 })
 
 app.listen(port, () => {
